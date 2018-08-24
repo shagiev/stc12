@@ -31,4 +31,16 @@ public class MathBox {
     public void remove(Integer number) {
         collection.remove(number);
     }
+
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        if (!super.equals(object)) return false;
+        MathBox mathBox = (MathBox) object;
+        return java.util.Objects.equals(collection, mathBox.collection);
+    }
+
+    public int hashCode() {
+        return java.util.Objects.hash(super.hashCode(), collection);
+    }
 }

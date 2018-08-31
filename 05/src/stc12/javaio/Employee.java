@@ -1,6 +1,7 @@
 package stc12.javaio;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Employee implements Serializable {
     private String name;
@@ -32,4 +33,19 @@ public class Employee implements Serializable {
         this.job = job;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return age == employee.age &&
+                Float.compare(employee.salary, salary) == 0 &&
+                Objects.equals(name, employee.name) &&
+                Objects.equals(job, employee.job);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, age, salary, job);
+    }
 }

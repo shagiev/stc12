@@ -3,11 +3,11 @@ package stc12.javaio;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
 
 class EmployeeContainerTest {
     private final String TEST_FILENAME = "testDataFile.dat";
@@ -27,23 +27,14 @@ class EmployeeContainerTest {
 
     @Test
     public void testSaveAndGetByName() throws IOException {
-        EmployeeContainer container1 = new EmployeeContainer(TEST_FILENAME);
-        assertNull(container1.getByName("Vasya"), "Test file already has data.");
+        Employee[] employees = saveTestEmployees();
 
-        Employee employeeToSave = new Employee("Vasya", 45, 7000, "Driver");
+        EmployeeContainer container = new EmployeeContainer(TEST_FILENAME);
 
-        // Save 3 test employees. Our test employee must not be first or last.
-        container1.save(new Employee("Innokentiy", 37, 140000, "Engineer"));
-        container1.save(employeeToSave);
-        container1.save(new Employee("Stanislav", 17, 0, "Student"));
-
-        // Read data by other container to be sure that data was really written to file.
-        EmployeeContainer container2 = new EmployeeContainer(TEST_FILENAME);
-
-        Employee employeeFromContainer = container2.getByName("Vasya");
+        Employee employeeFromContainer = container.getByName("Vasya");
 
         assertNotNull(employeeFromContainer, "Cannot find employee by name.");
-        assertEmployeesEqual(employeeToSave, employeeFromContainer);
+        assertEmployeesEqual(employees[1], employeeFromContainer);
     }
 
     @Test
@@ -51,17 +42,74 @@ class EmployeeContainerTest {
         EmployeeContainer container1 = new EmployeeContainer(TEST_FILENAME);
         Employee employee = new Employee("Vasya", 23, 1, "test job");
         assertNull(container1.getByName(employee.getName()), "Test file already has data.");
-        container1.save(employee);
+        assertFalse(container1.delete(employee), "Deleting of not added employee returns true.");
+        assertTrue(container1.save(employee));
 
         // Test that employee was saved.
         assertEquals(employee.getName(), new EmployeeContainer(TEST_FILENAME).getByName(employee.getName()).getName());
 
         // Try to delete and check that the employee was deleted.
-        new EmployeeContainer(TEST_FILENAME).delete(employee);
+        assertTrue(new EmployeeContainer(TEST_FILENAME).delete(employee));
         assertNull(
             new EmployeeContainer(TEST_FILENAME).getByName(employee.getName()),
             "Employee was not deleted"
         );
+    }
+
+    @Test
+    public void testGetByJob() {
+        Employee[] employees = saveTestEmployees();
+
+        ArrayList<Employee> engineers = new EmployeeContainer(TEST_FILENAME).getByJob(  "Engineer");
+
+        assertEquals(2, engineers.size(), "getByJob returned incorrect count of employees");
+        assertTrue(
+                (engineers.get(0).equals(employees[1]) && engineers.get(1).equals(employees[3])) ||
+                        (engineers.get(0).equals(employees[3]) && engineers.get(1).equals(employees[1])),
+                "Method getByJob returns incorrect employees"
+        );
+    }
+
+    @Test
+    public void testSaveOrUpdate() {
+        Employee[] employees = saveTestEmployees();
+        Employee testEmployee = new Employee("John", 34, 1, "Musician");
+        assertTrue(new EmployeeContainer(TEST_FILENAME).saveOrUpdate(testEmployee));
+        assertEmployeesEqual(testEmployee, new EmployeeContainer(TEST_FILENAME).getByName("John"));
+
+        testEmployee = new Employee("John", 24, 2, "-");
+        assertTrue(new EmployeeContainer(TEST_FILENAME).saveOrUpdate(testEmployee));
+        assertEmployeesEqual(testEmployee, new EmployeeContainer(TEST_FILENAME).getByName("John"));
+    }
+
+    @Test
+    public void testChangeAllWork() {
+        saveTestEmployees();
+        assertTrue(new EmployeeContainer(TEST_FILENAME).changeAllWork("Engineer", "Artist"));
+        ArrayList<Employee> artists = new EmployeeContainer(TEST_FILENAME).getByJob("Artist");
+        assertEquals(2, artists.size());
+        assertTrue(
+                (artists.get(0).getName().equals("Vasya") && artists.get(1).getName().equals("Stanislav")) ||
+                        (artists.get(1).getName().equals("Vasya") && artists.get(0).getName().equals("Stanislav"))
+        );
+    }
+
+    private Employee[] saveTestEmployees() {
+        EmployeeContainer container1 = new EmployeeContainer(TEST_FILENAME);
+        assertNull(container1.getByName("Vasya"), "Test file already has data.");
+
+        Employee[] employeesToSave = {
+                new Employee("Name1", 3, 1, ""),
+                new Employee("Vasya", 45, 7000, "Engineer"),
+                new Employee("Innokentiy", 37, 14000, "Student"),
+                new Employee("Stanislav", 17, 200000, "Engineer")
+        };
+
+        for (Employee em: employeesToSave) {
+            assertTrue(container1.save(em));
+        }
+
+        return employeesToSave;
     }
 
     private void assertEmployeesEqual(Employee employee1, Employee employee2) {

@@ -32,7 +32,7 @@ public class MathBox {
         try {
             return a / b;
         } catch (ArithmeticException exception) {
-             throw new MyDivizionByZeroException();
+             throw new MyDivizionByZeroException(exception);
         }
     }
 

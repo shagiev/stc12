@@ -34,22 +34,26 @@ public class EmployeeContainer {
      * Save new employee to file.
      *
      * @param employee object to save.
+     * @return success.
      */
-    public void save(Employee employee) {
+    public boolean save(Employee employee) {
         try (ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(filename))) {
             employeeList.add(employee);
             saveToFile();
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     /**
      * Delete employee from file, if found.
      *
      * @param employeeToDelete object.
+     * @return true if employee deleted. False if nothing to delete.
      */
-    public void delete(Employee employeeToDelete) {
+    public boolean delete(Employee employeeToDelete) {
         Employee foundEmployee = null;
         for (Employee employee: employeeList) {
             if (employee.equals(employeeToDelete)) {
@@ -60,7 +64,58 @@ public class EmployeeContainer {
         if (foundEmployee != null) {
             employeeList.remove(foundEmployee);
             saveToFile();
+            return true;
         }
+        return false;
+    }
+
+    /**
+     * Get list of employees, working on concrete job.
+     *
+     * @param job Job name.
+     * @return List of employees.
+     */
+    public ArrayList<Employee> getByJob(String job) {
+        ArrayList<Employee> result = new ArrayList<>();
+        for (Employee em: employeeList) {
+            if (em.getJob().equals(job)) {
+                result.add(em);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Add employee to list or update if already exists.
+     *
+     * @param employee object to add or update.
+     * @return success.
+     */
+    public boolean saveOrUpdate(Employee employee) {
+        Employee foundEmployee = getByName(employee.getName());
+        if (foundEmployee != null) {
+            employeeList.remove(foundEmployee);
+        }
+        employeeList.add(employee);
+        saveToFile();
+        return true;
+    }
+
+    /**
+     * Change job for all employees had old job to new job.
+     *
+     * @param oldJob old job name.
+     * @param newJob new job name.
+     * @return success.
+     */
+    public boolean changeAllWork(String oldJob, String newJob) {
+        for (Employee em: getByJob(oldJob)) {
+            Employee newEmployee = new Employee(em.getName(), em.getAge(), em.getSalary(), newJob);
+            employeeList.remove(em);
+            employeeList.add(newEmployee);
+        }
+        saveToFile();
+        return true;
     }
 
     private void loadFromFile() {

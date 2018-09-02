@@ -7,12 +7,13 @@ public class EmployeeContainer {
     private ArrayList<Employee> employeeList = new ArrayList<>();
     private String filename;
 
+    private float salarySum;
+
     public EmployeeContainer(String filename) {
         this.filename = filename;
         if ((new File(filename)).exists()) {
             loadFromFile();
         }
-
     }
 
     /**
@@ -28,6 +29,15 @@ public class EmployeeContainer {
             }
         }
         return null;
+    }
+
+    /**
+     * Calculate salary sum.
+     * @return sum.
+     */
+    public float getSalarySum() {
+        salarySum =  employeeList.stream().map((em) -> em.getSalary()).reduce((s1, s2) -> s1 + s2).orElse((float) 0);
+        return salarySum;
     }
 
     /**
@@ -121,6 +131,7 @@ public class EmployeeContainer {
     private void loadFromFile() {
         try (ObjectInputStream stream = new ObjectInputStream(new FileInputStream(filename))) {
             employeeList = (ArrayList<Employee>) stream.readObject();
+            salarySum = (Float) stream.readObject();
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
@@ -129,6 +140,7 @@ public class EmployeeContainer {
     private void saveToFile() {
         try (ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(filename))) {
             stream.writeObject(employeeList);
+            stream.writeObject(getSalarySum());
         } catch (IOException e) {
             e.printStackTrace();
         }

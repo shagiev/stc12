@@ -94,6 +94,13 @@ class EmployeeContainerTest {
         );
     }
 
+    @Test
+    public void testGetSalarySum() {
+        assertEquals(0.0, new EmployeeContainer(TEST_FILENAME).getSalarySum());
+        saveTestEmployees();
+        assertEquals(221001.0, new EmployeeContainer(TEST_FILENAME).getSalarySum(), "Error salary sum counting");
+    }
+
     private Employee[] saveTestEmployees() {
         EmployeeContainer container1 = new EmployeeContainer(TEST_FILENAME);
         assertNull(container1.getByName("Vasya"), "Test file already has data.");

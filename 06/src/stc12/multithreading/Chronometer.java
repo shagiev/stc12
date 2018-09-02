@@ -35,5 +35,6 @@ public class Chronometer extends Thread {
                 monitor.notifyAll();
             }
         }
+        monitor.finish();
     }
 }

@@ -18,7 +18,7 @@ public class Counter extends Thread {
 
     public void run() {
         int lastTime = 0;
-        do {
+        while (!monitor.getIsFinished()) {
             synchronized (monitor) {
                 try {
                     monitor.wait();
@@ -32,6 +32,6 @@ public class Counter extends Thread {
                 System.out.println(interval + " секунд");
                 lastTime = currentTime;
             }
-        } while (!this.isInterrupted());
+        }
     }
 }

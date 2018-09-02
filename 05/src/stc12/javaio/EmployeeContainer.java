@@ -36,7 +36,10 @@ public class EmployeeContainer {
      * @return sum.
      */
     public float getSalarySum() {
-        salarySum =  employeeList.stream().map((em) -> em.getSalary()).reduce((s1, s2) -> s1 + s2).orElse((float) 0);
+        salarySum =  employeeList.stream()
+                .map(Employee::getSalary)
+                .reduce((s1, s2) -> s1 + s2)
+                .orElse((float) 0);
         return salarySum;
     }
 

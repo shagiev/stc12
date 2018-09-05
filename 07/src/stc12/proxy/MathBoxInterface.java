@@ -4,8 +4,9 @@ import java.util.Collection;
 
 public interface MathBoxInterface {
 
-    public void sort();
-    public int summator();
-    public Collection<Integer> splitter(int divider);
-    public void remove(Integer number);
+    void sort();
+    int summator();
+    Collection<Integer> splitter(Integer divider);
+    void remove(Integer number);
+    void clearContainer();
 }

@@ -24,7 +24,7 @@ public class MathBox implements MathBoxInterface {
         return collection.stream().reduce((v1, v2) -> v1 + v2).orElse(0);
     }
 
-    public Collection<Integer> splitter(int divider) {
+    public Collection<Integer> splitter(Integer divider) {
         return collection.stream().map(number -> number / divider).collect(Collectors.toList());
     }
 
@@ -42,5 +42,10 @@ public class MathBox implements MathBoxInterface {
 
     public int hashCode() {
         return Objects.hash(super.hashCode(), collection);
+    }
+
+    @ClearData
+    public void clearContainer() {
+        // do nothing. Collection will clear in proxy.
     }
 }

@@ -26,5 +26,9 @@ public class Main {
         System.out.println("Удалим число 5: ");
         mathBoxProxy.remove(5);
         System.out.println(mathBoxProxy);
+
+        System.out.println("Попробуем очистку коллекции по аннотации.");
+        mathBoxProxy.clearContainer();
+        System.out.println("Теперь содержимое коллекции: " + mathBoxProxy);
     }
 }

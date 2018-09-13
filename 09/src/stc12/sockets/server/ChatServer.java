@@ -13,7 +13,7 @@ public class ChatServer {
     private Integer port;
     private ArrayList<ServerSocketThread> serverSocketThreadList = new ArrayList<>();
 
-    private HashSet<String> names;
+    private HashSet<String> names = new HashSet<>();
 
     public ChatServer(Logger logger, Integer port) {
         this.logger = logger;
@@ -29,7 +29,6 @@ public class ChatServer {
 
                 serverSocketThreadList.add(serverThread);
 
-
             } while (!serverSocketThreadList.isEmpty());
 
         } catch (IOException e) {
@@ -38,7 +37,7 @@ public class ChatServer {
     }
 
     boolean checkNameExists(String name) {
-        return !names.contains(name);
+        return names.contains(name);
     }
 
     void addName(String userName) {
@@ -53,7 +52,7 @@ public class ChatServer {
     void sendAll(String userName, String message, ServerSocketThread serverSocketThread) {
         for (ServerSocketThread socketThread: serverSocketThreadList) {
             if (socketThread != serverSocketThread) {
-                serverSocketThread.send(userName, message);
+                socketThread.send(userName, message);
             }
         }
     }

@@ -33,7 +33,7 @@ public class ChatClient {
         while (!socket.isClosed()) {
             String message = reader.nextLine();
             try {
-                writer.write(message);
+                writer.write(message + "\r\n");
                 writer.flush();
             } catch (IOException e) {
                 logger.log(e);

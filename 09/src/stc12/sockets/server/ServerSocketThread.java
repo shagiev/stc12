@@ -70,6 +70,7 @@ public class ServerSocketThread extends Thread {
     private void write(String message) {
         try {
             writer.write(message);
+            writer.write("\r\n");
             writer.flush();
         } catch (IOException e) {
             logger.log(e);
